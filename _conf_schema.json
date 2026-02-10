@@ -15,21 +15,25 @@
     "description": "媒体路由渲染模板",
     "type": "string",
     "options": [
-      "css_news_card.html",
-      "daily_ui_movie_card.html",
-      "modern_movie_card.html"
+      "media_news.html"
     ],
     "hint": "选择媒体路由推送内容所使用的渲染样式",
-    "default": "css_news_card.html"
+    "default": "media_news.html",
+    "enum": [
+      "media_news.html"
+    ]
   },
   "game_template": {
     "description": "游戏路由渲染模板",
     "type": "string",
     "options": [
-      "game_recipe_card.html"
+      "game_modern.html"
     ],
     "hint": "选择游戏路由推送内容所使用的渲染样式",
-    "default": "game_recipe_card.html"
+    "default": "game_modern.html",
+    "enum": [
+      "game_modern.html"
+    ]
   },
   "game_ai_analyze": {
     "description": "启用游戏推送 AI 智能识别",
@@ -46,10 +50,13 @@
     "description": "通用路由渲染模板",
     "type": "string",
     "options": [
-      "common_blog_card.html"
+      "common_blog.html"
     ],
     "hint": "选择通用路由推送内容所使用的渲染样式",
-    "default": "common_blog_card.html"
+    "default": "common_blog.html",
+    "enum": [
+      "common_blog.html"
+    ]
   },
   "platform_name": {
     "description": "消息平台名称",

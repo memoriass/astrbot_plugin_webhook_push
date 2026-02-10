@@ -63,6 +63,17 @@ class HtmlRenderer:
             else:
                 items.append({"type": "text", "text": line})
 
+        # 尝试在子目录查找模板
+        found_template = template_name
+        subdirs = ["game", "media", "common", "."]
+        for subdir in subdirs:
+            p = self.data_path / "utils" / "templates" / subdir / template_name
+            if p.exists():
+                # Jinja 加载器是基于 templates 根目录的，所以要带上子目录
+                if subdir != ".":
+                    found_template = f"{subdir}/{template_name}"
+                break
+        
         custom_uri = ""
         if self.data_path:
             custom_uri = self.data_path.resolve().as_uri()
@@ -82,7 +93,7 @@ class HtmlRenderer:
 
         return await render_template(
             template_path=self.template_path,
-            template_name=template_name,
+            template_name=found_template,
             context=context,
             viewport={"width": 800, "height": 600},  # 减小视口宽度，更像手机卡片
             selector=".card",

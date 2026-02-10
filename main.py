@@ -68,9 +68,9 @@ class Main(Star):
         )
 
         # 模板配置
-        self.media_template = config.get("media_template", "css_news_card.html")
-        self.game_template = config.get("game_template", "game_recipe_card.html")
-        self.common_template = config.get("common_template", "common_blog_card.html")
+        self.media_template = config.get("media_template", "media_news.html")
+        self.game_template = config.get("game_template", "game_modern.html")
+        self.common_template = config.get("common_template", "common_blog.html")
 
         # 初始化子模块
         # 获取标准数据路径
@@ -115,9 +115,68 @@ class Main(Star):
         # 初始化运行时数据
         self.message_queue: list[dict] = []
         self.last_batch_time = time.time()
+        
+        # 动态更新 Schema 以支持新模板热重载
+        self._update_conf_schema()
 
         # HTTP 服务器组件
         self.app = None
+
+    def _update_conf_schema(self):
+        """扫描模板目录动态更新 _conf_schema.json"""
+        try:
+            base = Path(__file__).parent
+            schema_path = base / "_conf_schema.json"
+            if not schema_path.exists():
+                return
+            
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+
+            # 映射关系: schema_key -> subdir
+            mapping = {
+                "game_template": "game",
+                "media_template": "media",
+                "common_template": "common",
+            }
+            
+            updated = False
+            for key, subdir in mapping.items():
+                if key not in schema: continue
+                
+                # 扫描子目录
+                tpl_dir = base / "utils" / "templates" / subdir
+                if tpl_dir.exists():
+                    files = [f.name for f in tpl_dir.glob("*.html")]
+                    if files:
+                        # 更新枚举选项
+                        current_enum = schema[key].get("enum", [])
+                        current_options = schema[key].get("options", [])
+                        
+                        # 覆盖旧配置，只保留当前实际存在的文件
+                        new_enum = sorted(list(set(files)))
+                        new_options = sorted(list(set(files)))
+                        
+                        if new_enum != current_enum or new_options != current_options:
+                            schema[key]["enum"] = new_enum
+                            schema[key]["options"] = new_options
+                            updated = True
+                            
+                            # 自检默认值是否合法，若不合法则自动修正为第一个可用模板
+                            current_default = schema[key].get("default")
+                            if current_default not in new_options and new_options:
+                                schema[key]["default"] = new_options[0]
+                                logger.warning(f"模板配置[{key}]默认值已自动修正为: {new_options[0]}")
+                            
+                            logger.info(f"检测到新模板[{subdir}]: {files}")
+
+            if updated:
+                with open(schema_path, "w", encoding="utf-8") as f:
+                    json.dump(schema, f, indent=2, ensure_ascii=False)
+                logger.info("已动态更新配置 Schema，新模板将在重载后生效")
+
+        except Exception as e:
+            logger.error(f"动态更新 Schema 失败: {e}")
         self.runner = None
         self.site = None
         self.batch_processor_task = None
@@ -489,13 +548,13 @@ class Main(Star):
             except Exception as e:
                 logger.error(f"单条消息发送失败: {e}")
 
-    @filter.command("webhook status")
+    @filter.command("webhook status", alias=["推送状态"])
     async def webhook_status(self, event: AstrMessageEvent):
         """查看 Webhook 状态 (AstrBot 命令)"""
         status_text = f"📊 Webhook 状态\n\n🌐 端口: {self.webhook_port}\n📋 待发: {len(self.message_queue)}\n🎯 目标: {self.group_id}"
         yield event.plain_result(status_text)
 
-    @filter.command("webhook clear_cache")
+    @filter.command("webhook clear_cache", alias=["推送数据清除"])
     async def webhook_clear_cache(self, event: AstrMessageEvent):
         """手动清除媒体数据缓存"""
         try:

@@ -3,19 +3,42 @@
 
 <head>
     <meta charset="UTF-8">
-    {% include '_fonts.html' %}
+    <!-- 移除外部字体，防止 Docker 网络阻塞 -->
+    <!-- {% include '_fonts.html' %} -->
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            /* 禁止任何默认边框和轮廓 */
+            outline: none;
+            border: none;
         }
 
         body {
             background: transparent;
-            font-family: 'Open Sans', 'Noto Sans SC', sans-serif;
+            /* 强制字体栈，优先使用常见中文字体，最后回退到 sans-serif */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans SC", "Microsoft YaHei", "PingFang SC", sans-serif;
             margin: 0;
             padding: 0;
+            line-height: 1.5;
+            /* 统一行高 */
+        }
+
+        /* 彻底清除列表默认样式，防止出现奇怪的符号（如半圆对勾） */
+        ul,
+        li {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+            /* 防止图片底部出现几像素空白 */
+            border: 0;
+            /* 移除图片边框 */
         }
 
         /* News Card Style (Ref: andytran) */
@@ -38,11 +61,16 @@
 
         /* Thumbnail Section */
         .thumbnail {
-            background: #000;
+            background: #2c3e50;
+            /* 加深底色，防止白边 */
             height: 240px;
             overflow: hidden;
+            /* 强制裁剪溢出内容 */
             position: relative;
             flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .thumbnail img {
@@ -50,8 +78,12 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            opacity: 0.8;
+            opacity: 0.9;
+            /* 稍微提升不透明度 */
             transition: all 0.3s linear 0s;
+            /* 如果图片挂了，这些属性可以隐藏默认的裂图图标 */
+            font-size: 0;
+            color: transparent;
         }
 
         /* Float Category Label */
