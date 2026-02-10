@@ -3,6 +3,7 @@ import base64
 import json
 import time
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 from aiohttp import web
@@ -457,6 +458,14 @@ class Main(Star):
                 # 动态提取除标准字段外的所有数据，作为渲染上下文
                 extra_render_context = {k: v for k, v in msg.items() if k not in ["message_text", "poster_url", "image_url", "template", "trace_id", "message_type", "timestamp"]}
                 
+                # 注入格式化时间
+                ts = msg.get("timestamp", time.time())
+                try:
+                    dt = datetime.fromtimestamp(float(ts))
+                    extra_render_context["formatted_time"] = dt.strftime("%m/%d %H:%M")
+                except Exception:
+                    extra_render_context["formatted_time"] = ""
+
                 # 使用 HtmlRenderer 异步渲染
                 img = await self.image_renderer.render(
                     msg["message_text"],
@@ -533,6 +542,14 @@ class Main(Star):
                 # 动态提取除标准字段外的所有数据，作为渲染上下文
                 extra_render_context = {k: v for k, v in msg.items() if k not in ["message_text", "poster_url", "image_url", "template", "trace_id", "message_type", "timestamp"]}
                 
+                # 注入格式化时间
+                ts = msg.get("timestamp", time.time())
+                try:
+                    dt = datetime.fromtimestamp(float(ts))
+                    extra_render_context["formatted_time"] = dt.strftime("%m/%d %H:%M")
+                except Exception:
+                    extra_render_context["formatted_time"] = ""
+
                 # 使用 HtmlRenderer 异步渲染
                 img = await self.image_renderer.render(
                     msg["message_text"],

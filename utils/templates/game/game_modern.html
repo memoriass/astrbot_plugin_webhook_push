@@ -91,11 +91,13 @@
             position: absolute;
             top: 20px;
             left: 20px;
-            padding: 6px 15px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            /* 更紧凑 */
+            border-radius: 2px;
+            /* 方形标志 */
             color: #FFFFFF;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: 700;
             text-transform: uppercase;
             z-index: 2;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
@@ -168,13 +170,19 @@
         <!-- Thumbnail -->
         <div class="thumbnail">
             <div class="category">
-                {%- set level_val = "信息" -%}
+                {%- set level_map = {
+                '严重': 'ERR', '崩溃': 'ERR', 'Error': 'ERR', 'Fatal': 'ERR',
+                '警告': 'WARN', 'Warning': 'WARN',
+                '成功': 'OK', 'Success': 'OK',
+                '信息': 'INFO', '通知': 'INFO', 'Info': 'INFO'
+                } -%}
+                {%- set level_val_raw = "" -%}
                 {%- for item in items -%}
                 {%- if item.type == 'kv' and '类型' in item.label -%}
-                {%- set level_val = item.value -%}
+                {%- set level_val_raw = item.value -%}
                 {%- endif -%}
                 {%- endfor -%}
-                {{ level_val }}
+                {{ level_map.get(level_val_raw, 'INFO') }}
             </div>
             <img src="{{ poster_url }}" alt="Game Background">
         </div>
@@ -208,13 +216,7 @@
         <!-- Footer Meta outside post-content for sticking to bottom -->
         <div class="post-meta">
             <span class="timestamp">
-                {%- set time_val = "" -%}
-                {%- for item in items -%}
-                {%- if item.type == 'kv' and '时间' in item.label -%}
-                {%- set time_val = item.value -%}
-                {%- endif -%}
-                {%- endfor -%}
-                {{ time_val }}
+                {{ formatted_time }}
             </span>
             <span class="comments">
                 AstrBot Webhook Push
