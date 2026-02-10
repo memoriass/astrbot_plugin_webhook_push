@@ -67,7 +67,8 @@ class HtmlRenderer:
         found_template = template_name
         subdirs = ["game", "media", "common", "."]
         for subdir in subdirs:
-            p = self.data_path / "utils" / "templates" / subdir / template_name
+            # 模板在插件安装目录下的 templates 文件夹中，而非 data_path
+            p = self.template_path / subdir / template_name
             if p.exists():
                 # Jinja 加载器是基于 templates 根目录的，所以要带上子目录
                 if subdir != ".":
