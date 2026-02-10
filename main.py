@@ -278,17 +278,19 @@ class Main(Star):
             logger.info(f"[{trace_id}][游戏Webhook] 收到 Webhook 请求: {request.path}")
 
             payload = json.loads(body_text)
-            result = await self.game_handler.process_game_webhook(payload, headers)
+            
+            # --- 异步处理：直接入队并返回 ---
+            raw_payload = {
+                "raw_data": payload,
+                "headers": headers,
+                "timestamp": time.time(),
+                "message_type": "raw_game", # 新增原始游戏类型
+                "trace_id": trace_id,
+                "template": self.game_template,
+            }
+            await self._enqueue(raw_payload)
+            return Response(text=f"已加入队列 (ID: {trace_id})", status=200)
 
-            if result and "message_text" in result:
-                result["message_type"] = "game"
-                result["timestamp"] = time.time()
-                result["trace_id"] = trace_id
-                result["template"] = self.game_template
-                await self._enqueue(result)
-                return Response(text=f"已加入队列 (ID: {trace_id})", status=200)
-
-            return Response(text="无效数据", status=400)
         except Exception as e:
             logger.error(f"[{trace_id}] Webhook 处理出错: {e}")
             return Response(text="Internal Error", status=500)
@@ -356,6 +358,17 @@ class Main(Star):
                 if processed:
                     processed["trace_id"] = trace_id
                     processed["template"] = msg.get("template", self.media_template)
+                    final_messages.append(processed)
+            elif m_type == "raw_game":
+                logger.debug(f"[{trace_id}] 开始在后台处理游戏解析与 AI 分析...")
+                # 在后台慢慢调 AI 和转 Base64，不阻塞接收端
+                processed = await self.game_handler.process_game_webhook(
+                    msg["raw_data"], msg.get("headers")
+                )
+                if processed:
+                    processed["trace_id"] = trace_id
+                    processed["template"] = msg.get("template", self.game_template)
+                    processed["message_type"] = "game"
                     final_messages.append(processed)
             else:
                 # 已经是标准格式 (game 或 common)
