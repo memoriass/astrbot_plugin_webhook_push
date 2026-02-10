@@ -202,15 +202,9 @@ class GameHandler:
 
             # 随机选择一张
             selected_file = random.choice(matches)
-
-            # 读取并转为 base64
-            with open(selected_file, "rb") as f:
-                img_data = f.read()
-                b64 = base64.b64encode(img_data).decode()
-                ext = selected_file.suffix.lower().replace(".", "")
-                if ext == "jpg":
-                    ext = "jpeg"
-                return f"data:image/{ext};base64,{b64}"
+            
+            # 不再转 base64，直接返回文件 URI 以提高渲染速度
+            return selected_file.absolute().as_uri()
 
         except Exception as e:
             logger.error(f"加载本地游戏背景图失败: {e}")

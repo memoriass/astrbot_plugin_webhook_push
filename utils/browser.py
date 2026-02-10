@@ -36,6 +36,8 @@ class BrowserManager:
                         args=[
                             "--no-sandbox",
                             "--disable-setuid-sandbox",
+                            "--disable-dev-shm-usage", # 处理 Docker shm 内存过小问题
+                            "--disable-gpu", # 禁用 GPU 加速
                             "--disable-web-security",
                             "--allow-file-access-from-files",
                         ],
@@ -101,19 +103,13 @@ async def render_template(
 
     async with PageContext(viewport=viewport, device_scale_factor=device_scale_factor) as page:
         logger.info(f"[{template_name}] 开始渲染页面内容 (HTML大小: {len(html_content)/1024:.2f} KB)...")
-        # 使用 load 确保基本资源已加载，避免 Docker 环境下 networkidle 超时
+        # 使用 domcontentloaded 以在 Docker 下获得更快的响应，避免 load 状态死等
         try:
-            await page.set_content(html_content, wait_until="load", timeout=60000)
-            logger.info(f"[{template_name}] 页面内容加载完成")
+            await page.set_content(html_content, wait_until="domcontentloaded", timeout=30000)
+            logger.info(f"[{template_name}] 页面基础内容加载完成")
         except Exception as e:
             logger.error(f"[{template_name}] 页面 set_content 失败/超时: {e}")
             raise
-
-        try:
-            # 额外等待一小段时间以防万一
-            await page.wait_for_timeout(1000)
-        except Exception as e:
-            logger.warning(f"页面渲染等待失败: {e}")
 
         if selector == "body":
             logger.info("正在对整个页面进行截图...")
