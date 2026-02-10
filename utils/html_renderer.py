@@ -33,7 +33,8 @@ class HtmlRenderer:
             logger.warning(f"读取内嵌字体失败: {e}")
 
     async def render(
-        self, text: str, image_url: str = None, template_name: str = "css_news_card.html"
+        self, text: str, image_url: str = None, template_name: str = "css_news_card.html",
+        extra_context: dict = None
     ) -> bytes:
         # Prapare fonts
         self._load_fonts()
@@ -75,6 +76,9 @@ class HtmlRenderer:
             "font_base64_regular": self._font_cache["regular"] or "",
             "font_base64_bold": self._font_cache["bold"] or "",
         }
+        
+        if extra_context:
+            context.update(extra_context)
 
         return await render_template(
             template_path=self.template_path,

@@ -119,11 +119,21 @@ class GameHandler:
 
         message_text = "\n".join(message_lines)
 
+        # 提前计算颜色，解决 Docker 下 CSS 渲染不一致问题
+        level_to_color = {
+            "严重": "#e74c3c", "崩溃": "#e74c3c", "Error": "#e74c3c",
+            "警告": "#f39c12", "Warning": "#f39c12",
+            "成功": "#2ecc71", "Success": "#2ecc71",
+            "信息": "#3498db", "通知": "#3498db"
+        }
+        level_color = level_to_color.get(level_str, "#3498db")
+
         return {
             "status": "success",
             "message_text": message_text,
             "source": parsed_data.get("source", "generic"),
             "game_data": payload,
+            "level_color": level_color, # 直接注入颜色
             "poster_url": self._get_random_bg_for_source(parsed_data.get("source", "generic")),
         }
 
@@ -203,8 +213,17 @@ class GameHandler:
             # 随机选择一张
             selected_file = random.choice(matches)
             
-            # 不再转 base64，直接返回文件 URI 以提高渲染速度
-            return selected_file.absolute().as_uri()
+            # Docker 内部 file 协议常受阻，回退至优化后的 Base64 方案
+            try:
+                with open(selected_file, "rb") as f:
+                    img_data = f.read()
+                    b64 = base64.b64encode(img_data).decode()
+                    ext = selected_file.suffix.lower().replace(".", "")
+                    if ext == "jpg": ext = "jpeg"
+                    return f"data:image/{ext};base64,{b64}"
+            except Exception as e:
+                logger.error(f"读取图片文件失败: {e}")
+                return ""
 
         except Exception as e:
             logger.error(f"加载本地游戏背景图失败: {e}")

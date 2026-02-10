@@ -68,57 +68,14 @@
             z-index: 2;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 
-                {
-                %- set level_val="Info" -%
+            /* 使用注入的 level_color，解决 Docker 环境下 CSS 逻辑失效问题 */
+            background: {
+                    {
+                    level_color | default('#3498db')
+                }
             }
 
-                {
-                %- for item in items -%
-            }
-
-                {
-                %- if item.type=='kv' and '类型' in item.label -%
-            }
-
-                {
-                %- set level_val=item.value -%
-            }
-
-                {
-                %- endif -%
-            }
-
-                {
-                %- endfor -%
-            }
-
-                {
-                % if "严重" in level_val or "崩溃" in level_val or "Error" in level_val %
-            }
-
-            background: #e74c3c;
-
-                {
-                % elif "警告" in level_val or "Warning" in level_val %
-            }
-
-            background: #f39c12;
-
-                {
-                % elif "成功" in level_val or "Success" in level_val %
-            }
-
-            background: #2ecc71;
-
-                {
-                % else %
-            }
-
-            background: #3498db;
-
-                {
-                % endif %
-            }
+            ;
         }
 
         /* Content Section */
@@ -179,7 +136,7 @@
         <!-- Thumbnail -->
         <div class="thumbnail">
             <div class="category">
-                {%- set level_val = "Info" -%}
+                {%- set level_val = "信息" -%}
                 {%- for item in items -%}
                 {%- if item.type == 'kv' and '类型' in item.label -%}
                 {%- set level_val = item.value -%}

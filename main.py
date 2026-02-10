@@ -382,11 +382,15 @@ class Main(Star):
             for msg in messages:
                 trace_id = msg.get("trace_id", "Unknown")
                 logger.info(f"[{trace_id}] 正在渲染")
+                # 动态提取除标准字段外的所有数据，作为渲染上下文
+                extra_render_context = {k: v for k, v in msg.items() if k not in ["message_text", "poster_url", "image_url", "template", "trace_id", "message_type", "timestamp"]}
+                
                 # 使用 HtmlRenderer 异步渲染
                 img = await self.image_renderer.render(
                     msg["message_text"],
                     msg.get("poster_url") or msg.get("image_url"),
                     template_name=msg.get("template", "card_default.html"),
+                    extra_context=extra_render_context
                 )
 
                 if img:
@@ -454,11 +458,15 @@ class Main(Star):
             trace_id = msg.get("trace_id", "Unknown")
             try:
                 logger.info(f"[{trace_id}] 正在渲染")
+                # 动态提取除标准字段外的所有数据，作为渲染上下文
+                extra_render_context = {k: v for k, v in msg.items() if k not in ["message_text", "poster_url", "image_url", "template", "trace_id", "message_type", "timestamp"]}
+                
                 # 使用 HtmlRenderer 异步渲染
                 img = await self.image_renderer.render(
                     msg["message_text"],
                     msg.get("poster_url") or msg.get("image_url"),
                     template_name=msg.get("template", "card_default.html"),
+                    extra_context=extra_render_context
                 )
                 if img:
                     chain = MessageChain([Comp.Image.fromBytes(img)])
