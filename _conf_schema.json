@@ -31,6 +31,17 @@
     "hint": "选择游戏路由推送内容所使用的渲染样式",
     "default": "game_recipe_card.html"
   },
+  "game_ai_analyze": {
+    "description": "启用游戏推送 AI 智能识别",
+    "type": "bool",
+    "hint": "开启后将使用 LLM 对推送内容进行深度识别和摘要",
+    "default": true
+  },
+  "game_ai_max_tokens": {
+    "description": "游戏推送 AI 分析最大字数限制",
+    "type": "int",
+    "default": 150
+  },
   "common_template": {
     "description": "通用路由渲染模板",
     "type": "string",

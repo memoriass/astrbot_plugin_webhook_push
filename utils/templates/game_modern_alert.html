@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    {% include '_fonts.html' %}
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: transparent;
+            font-family: 'Open Sans', 'Noto Sans SC', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* News Card Style (Ref: andytran) */
+        .post-module {
+            position: relative;
+            z-index: 1;
+            display: block;
+            background: #FFFFFF;
+            min-width: 420px;
+            max-width: 420px;
+            height: auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s linear 0s;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Thumbnail Section */
+        .thumbnail {
+            background: #000;
+            height: 240px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .thumbnail img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+            transition: all 0.3s linear 0s;
+        }
+
+        /* Float Category Label */
+        .category {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 6px 15px;
+            border-radius: 4px;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            z-index: 2;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+
+                {
+                %- set level_val="Info" -%
+            }
+
+                {
+                %- for item in items -%
+            }
+
+                {
+                %- if item.type=='kv' and '类型' in item.label -%
+            }
+
+                {
+                %- set level_val=item.value -%
+            }
+
+                {
+                %- endif -%
+            }
+
+                {
+                %- endfor -%
+            }
+
+                {
+                % if "严重" in level_val or "崩溃" in level_val or "Error" in level_val %
+            }
+
+            background: #e74c3c;
+
+                {
+                % elif "警告" in level_val or "Warning" in level_val %
+            }
+
+            background: #f39c12;
+
+                {
+                % elif "成功" in level_val or "Success" in level_val %
+            }
+
+            background: #2ecc71;
+
+                {
+                % else %
+            }
+
+            background: #3498db;
+
+                {
+                % endif %
+            }
+        }
+
+        /* Content Section */
+        .post-content {
+            position: relative;
+            background: #FFFFFF;
+            width: 100%;
+            padding: 30px 30px 10px 30px;
+            flex-grow: 1;
+        }
+
+        .title {
+            margin: 0;
+            padding: 0 0 10px;
+            color: #333333;
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .sub_title {
+            margin: 0;
+            padding: 0 0 20px;
+            color: #3498db;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .description {
+            color: #666666;
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 10px;
+        }
+
+        /* Post Metadata / Footer - Sticky to bottom */
+        .post-meta {
+            color: #999999;
+            font-size: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding: 15px 30px;
+            margin-top: auto;
+            background: #fafafa;
+        }
+
+        .timestamp {
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="post-module card">
+        <!-- Thumbnail -->
+        <div class="thumbnail">
+            <div class="category">
+                {%- set level_val = "Info" -%}
+                {%- for item in items -%}
+                {%- if item.type == 'kv' and '类型' in item.label -%}
+                {%- set level_val = item.value -%}
+                {%- endif -%}
+                {%- endfor -%}
+                {{ level_val }}
+            </div>
+            <img src="{{ poster_url }}" alt="Game Background">
+        </div>
+
+        <!-- Content -->
+        <div class="post-content">
+            <h1 class="title">{{ title }}</h1>
+            <h2 class="sub_title">游戏通知</h2>
+
+            <div class="description">
+                {%- for item in items -%}
+                {%- if item.type == 'text' -%}
+                {%- if '由 AI' not in item.text and item.text != title -%}
+                {{ item.text }}
+                {%- if not loop.last -%}<br />{%- endif -%}
+                {%- endif -%}
+                {%- elif item.type == 'kv' -%}
+                {%- if item.label not in ['类型:','类型：','事件:','事件：','时间:','时间：','源:','源：','备注:','备注：'] -%}
+                {{ item.label }}{{ item.value }}<br />
+                {%- endif -%}
+                {%- endif -%}
+                {%- endfor -%}
+                {%- if '备注:' in message_text -%}
+                <div style="margin-top: 10px; font-size: 11px; color: #3498db; opacity: 0.8;">
+                    ★ AI 智能语义分析已启用
+                </div>
+                {%- endif -%}
+            </div>
+        </div>
+
+        <!-- Footer Meta outside post-content for sticking to bottom -->
+        <div class="post-meta">
+            <span class="timestamp">
+                {%- set time_val = "" -%}
+                {%- for item in items -%}
+                {%- if item.type == 'kv' and '时间' in item.label -%}
+                {%- set time_val = item.value -%}
+                {%- endif -%}
+                {%- endfor -%}
+                {{ time_val }}
+            </span>
+            <span class="comments">
+                AstrBot Webhook Push
+            </span>
+        </div>
+    </div>
+</body>
+
+</html>

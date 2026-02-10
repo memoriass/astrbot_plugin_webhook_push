@@ -11,7 +11,7 @@ from aiohttp.web import Request, Response
 import astrbot.api.message_components as Comp
 from astrbot.api import AstrBotConfig, logger
 from astrbot.api.event import AstrMessageEvent, MessageChain, filter
-from astrbot.api.star import Context, Star
+from astrbot.api.star import Context, Star, register
 from astrbot.core.utils.astrbot_path import get_astrbot_data_path
 
 from .adapters import AdapterFactory
@@ -30,6 +30,7 @@ DEFAULT_CACHE_TTL = 300
 DEFAULT_BATCH_INTERVAL = 300
 
 
+@register("astrbot_plugin_webhook_push", "memoriass", "通知推送插件", "2.0.0")
 class Main(Star):
     """通用 Webhook 推送插件"""
 
