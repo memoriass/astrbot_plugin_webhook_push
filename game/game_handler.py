@@ -81,6 +81,18 @@ class GameHandler:
                         pass
             
             level = str(payload.get("level", "info")).lower()
+            
+            # --- BAAS 专用启发式识别增强 ---
+            if is_baas:
+                title_low = event_type.lower()
+                if "error" in title_low or "crashed" in title_low:
+                    level = "error"
+                    event_type = "任务报错"
+                elif "completed" in title_low or "success" in title_low:
+                    level = "success"
+                    event_type = "任务完成"
+            # ---------------------------
+
             level_map = {"error": "严重", "critical": "崩溃", "warning": "警告", "success": "成功", "info": "信息"}
             
             parsed_data = {
