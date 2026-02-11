@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Movie Card</title>
+    <style>
+        /* Based on Andre Madarang's Movie Card design via Fribly/CodePen */
+
+        *,
+        *:before,
+        *:after {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: transparent;
+            font-family: "Lato", "Noto Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .movie-card {
+            width: 780px;
+            background: #F0F0ED;
+            border-radius: 5px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: block;
+        }
+
+        .hero {
+            height: 342px;
+            margin: 0;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+
+        /* The slanted background effect */
+        .hero:before {
+            content: '';
+            width: 100%;
+            height: 110%;
+            position: absolute;
+            top: 0;
+            left: 0;
+
+            background: {
+                % if poster_url %
+            }
+
+            url("{{ poster_url }}") no-repeat center center {
+                % else %
+            }
+
+            #34495e {
+                % endif %
+            }
+
+            ;
+            background-size: cover;
+            z-index: -1;
+            transform: skewY(-2.2deg);
+            transform-origin: 0 0;
+            -webkit-backface-visibility: hidden;
+        }
+
+        .cover {
+            position: absolute;
+            top: 160px;
+            left: 40px;
+            z-index: 20;
+            width: 187px;
+            height: 282px;
+            object-fit: cover;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .details {
+            padding: 180px 0 0 280px;
+        }
+
+        .title1 {
+            color: white;
+            font-size: 38px;
+            margin-bottom: 8px;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .title2 {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 20px;
+            font-weight: 300;
+            margin-bottom: 15px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .description {
+            padding-bottom: 30px;
+            min-height: 200px;
+            font-size: 15px;
+            line-height: 24px;
+            color: #777;
+            display: flex;
+        }
+
+        .column1 {
+            padding-left: 40px;
+            padding-top: 120px;
+            width: 240px;
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .tag {
+            background: white;
+            border-radius: 10px;
+            padding: 4px 10px;
+            font-size: 13px;
+            margin: 0 4px 10px 4px;
+            display: inline-block;
+            color: #555;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .column2 {
+            padding-left: 20px;
+            padding-top: 30px;
+            padding-right: 40px;
+            flex-grow: 1;
+        }
+
+        .column2 p {
+            margin: 0 0 20px 0;
+            color: #555;
+        }
+
+        .kv-container {
+            border-top: 1px solid #ddd;
+            padding-top: 15px;
+        }
+
+        .kv-row {
+            display: flex;
+            margin-bottom: 6px;
+            font-size: 13px;
+        }
+
+        .label {
+            color: #999;
+            font-weight: 700;
+            width: 80px;
+            flex-shrink: 0;
+        }
+
+        .value {
+            color: #444;
+            word-break: break-all;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="movie-card card">
+        {% if poster_url %}
+        <img src="{{ poster_url }}" alt="cover" class="cover" />
+        {% endif %}
+
+        <div class="hero">
+            <div class="details">
+                <div class="title1">{{ title }}</div>
+                <div class="title2">WEBHOOK NOTIFICATION</div>
+            </div>
+        </div>
+
+        <div class="description">
+            <div class="column1">
+                <span class="tag">AstrBot</span>
+                <span class="tag">Movie</span>
+                <span class="tag">Push</span>
+            </div>
+
+            <div class="column2">
+                <div class="kv-container">
+                    {% for item in items %}
+                    {% if item.type == 'kv' %}
+                    <div class="kv-row">
+                        <span class="label">{{ item.label }}</span>
+                        <span class="value">{{ item.value }}</span>
+                    </div>
+                    {% elif item.type == 'text' %}
+                    <p>{{ item.text }}</p>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
