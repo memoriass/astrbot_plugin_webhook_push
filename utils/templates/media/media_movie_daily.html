@@ -6,6 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Movie Card Style</title>
     <style>
+        /* Localized Fonts */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url({% if font_base64_regular %}"data:font/opentype;base64,{{ font_base64_regular }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Regular.otf"{% endif %}) format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            src: url({% if font_base64_bold %}"data:font/opentype;base64,{{ font_base64_bold }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Bold.otf"{% endif %}) format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 400;
+            src: url('{{ resource_path }}/fonts/Montserrat-Regular.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Montserrat';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ resource_path }}/fonts/Montserrat-Bold.ttf') format('truetype');
+        }
+
         /* Based on George Miro's Daily UI Movie Card */
 
         * {
@@ -40,7 +69,8 @@
             background-repeat: no-repeat;
             background-size: cover;
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            /* 提高层级 */
         }
 
         .movie-header .poster-image {
@@ -50,7 +80,8 @@
             position: absolute;
             top: 0;
             left: 0;
-            z-index: -1;
+            z-index: 1;
+            /* 确保在 header 内部处于可见层 */
             /* Gradient Mask mimicking the original SCSS */
             mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
             -webkit-mask-image: linear-gradient(to bottom, black 0%, black 70%, transparent 100%);
