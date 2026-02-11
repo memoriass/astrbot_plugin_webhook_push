@@ -6,6 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modern Movie Card</title>
     <style>
+        /* Localized Fonts */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url({% if font_base64_regular %}"data:font/opentype;base64,{{ font_base64_regular }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Regular.otf"{% endif %}) format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            src: url({% if font_base64_bold %}"data:font/opentype;base64,{{ font_base64_bold }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Bold.otf"{% endif %}) format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Lato';
+            font-style: normal;
+            font-weight: 400;
+            src: url('{{ resource_path }}/fonts/Lato-Regular.ttf') format('truetype');
+        }
+
+        @font-face {
+            font-family: 'Lato';
+            font-style: normal;
+            font-weight: 700;
+            src: url('{{ resource_path }}/fonts/Lato-Bold.ttf') format('truetype');
+        }
+
         /* Based on Andre Madarang's Movie Card design via Fribly/CodePen */
 
         *,
@@ -51,21 +80,21 @@
             position: absolute;
             top: 0;
             left: 0;
+            background-color: #34495e;
 
-            background: {
+                {
                 % if poster_url %
             }
 
-            url("{{ poster_url }}") no-repeat center center {
-                % else %
-            }
+            background-image: url("{{ poster_url }}");
+            background-repeat: no-repeat;
+            background-position: center center;
+            background-size: cover;
 
-            #34495e {
+                {
                 % endif %
             }
 
-            ;
-            background-size: cover;
             z-index: -1;
             transform: skewY(-2.2deg);
             transform-origin: 0 0;

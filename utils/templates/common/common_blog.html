@@ -3,10 +3,25 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial=1.0">
     <title>Blog Card</title>
     <!-- System Fonts -->
     <style>
+        /* Localized Fonts */
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 400;
+            src: url({% if font_base64_regular %}"data:font/opentype;base64,{{ font_base64_regular }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Regular.otf"{% endif %}) format('opentype');
+        }
+
+        @font-face {
+            font-family: 'Noto Sans SC';
+            font-style: normal;
+            font-weight: 700;
+            src: url({% if font_base64_bold %}"data:font/opentype;base64,{{ font_base64_bold }}"{% else %}"{{ resource_path }}/fonts/SourceHanSansCN-Bold.otf"{% endif %}) format('opentype');
+        }
+
         /* Recreated based on 'Blog Card' style by Kitsune (CodePen zKzRXQ) */
 
         * {
