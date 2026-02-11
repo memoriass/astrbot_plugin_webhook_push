@@ -118,19 +118,22 @@
         }
 
         .title1 {
-            color: white;
-            font-size: 38px;
+            color: #2C3E50;
+            font-size: 24px;
+            /* 减小字号以适应侧边栏 */
             margin-bottom: 8px;
             font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            line-height: 1.2;
         }
 
         .title2 {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 20px;
-            font-weight: 300;
-            margin-bottom: 15px;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+            color: #E74C3C;
+            /* 使用更明显的红色作为标签颜色 */
+            font-size: 11px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
         }
 
         .description {
@@ -205,17 +208,13 @@
         {% endif %}
 
         <div class="hero">
-            <div class="details">
-                <div class="title1">{{ title }}</div>
-                <div class="title2">WEBHOOK NOTIFICATION</div>
-            </div>
+            <!-- 此时背景图不再被文字遮挡 -->
         </div>
 
         <div class="description">
             <div class="column1">
-                <span class="tag">AstrBot</span>
-                <span class="tag">Movie</span>
-                <span class="tag">Push</span>
+                <div class="title2">WEBHOOK NOTIFICATION</div>
+                <div class="title1">{{ title }}</div>
             </div>
 
             <div class="column2">

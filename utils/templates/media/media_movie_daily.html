@@ -53,11 +53,16 @@
 
         .container {
             width: 400px;
-            background-color: #1e1b26;
-            box-shadow: 5px 5px 115px -14px black;
+            background-color: #ffffff;
+            /* 切换为白色背景 */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            /* 更柔和的投影 */
             border-radius: 8px;
             overflow: hidden;
-            color: #e7e7e7;
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            /* 高度自适应 */
         }
 
         .movie-header {
@@ -91,9 +96,12 @@
             padding: 20px 25px 30px;
             position: relative;
             z-index: 10;
-            margin-top: -100px;
-            /* Pull text up into the gradient */
-            background: linear-gradient(to top, #1e1b26 0%, #1e1b26 80%, rgba(30, 27, 38, 0.5) 100%);
+            margin-top: -80px;
+            /* 稍微减小上移距离 */
+            /* 切换为向白色透明过渡的渐变 */
+            background: linear-gradient(to top, #ffffff 0%, #ffffff 70%, rgba(255, 255, 255, 0.6) 100%);
+            color: #333333;
+            /* 主文字颜色 */
         }
 
         .movie-header .menu {
@@ -114,9 +122,10 @@
         h1 {
             font-family: "Montserrat", "Noto Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
             font-size: 32px;
-            font-weight: 400;
+            font-weight: 700;
             margin: 0 0 10px 0;
-            color: #fff;
+            color: #2c3e50;
+            /* 深色标题 */
             line-height: 1.1;
         }
 
@@ -139,7 +148,8 @@
             font-family: "Montserrat", "Noto Sans SC", "WenQuanYi Micro Hei", "Droid Sans Fallback", sans-serif;
             font-size: 13px;
             font-weight: 700;
-            color: #fff;
+            color: #e74c3c;
+            /* 红色摘要标签，更醒目 */
             margin: 0 0 10px 0;
             letter-spacing: 1px;
             text-transform: uppercase;
@@ -148,8 +158,9 @@
         .movie-description {
             font-size: 14px;
             font-weight: 400;
-            color: #9b9b9b;
-            line-height: 1.5;
+            color: #555555;
+            /* 灰色正文 */
+            line-height: 1.6;
             margin: 0 0 20px 0;
             text-align: justify;
         }
@@ -172,7 +183,8 @@
         }
 
         .value {
-            color: #e7e7e7;
+            color: #333333;
+            /* 深色键值对内容 */
             word-break: break-all;
         }
 
@@ -232,12 +244,9 @@
             <h1>{{ title }}</h1>
 
             <ul class="movie-gen">
-                <li>Webhook Push /</li>
-                <li>AstrBot /</li>
-                <li>Notification</li>
+                <li>MEDIA WEBHOOK PUSH</li>
             </ul>
 
-            <h5>SUMMARY</h5>
             <div class="movie-description">
                 {% for item in items %}
                 {% if item.type == 'text' %}

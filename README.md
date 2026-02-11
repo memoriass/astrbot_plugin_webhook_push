@@ -1,41 +1,35 @@
-# 媒体通知 Webhook 插件
+# AstrBot Webhook Push 🚀
 
-为 AstrBot 提供媒体服务器通知功能。原始逻辑来自 @CikeyQi
+通用型 Webhook 推送插件。支持媒体服务器（Emby/Jellyfin/Plex）、自动化脚本（BAAS 等）及各类服务的通知。
 
-## 使用说明
+## ⚡ 快速开始
 
-1. **在媒体服务器中设置 Webhook URL**
-   ```
-   http://your-bot-server:60071/media-webhook
-   ```
-2. **插件会自动接收并推送通知到指定群组**
-   - 自动选择最佳适配器
-   - 支持合并转发，避免刷屏
-   - 包含图片和详细信息
+1. **配置端口与群组**：在插件配置中设置 `webhook_port` (默认 `60071`) 和 `group_id`。
+2. **设置推送地址**：在您的服务中填写以下 URL：
 
-## 📊 状态查看
+| 场景 | Webhook URL 示例 |
+| :--- | :--- |
+| **媒体服务器** (Emby/Jellyfin/Plex) | `http://<IP>:60071/media-webhook` |
+| **自动化脚本** (BAAS 等游戏脚本) | `http://<IP>:60071/game-webhook` |
+| **各类服务** (通用推送) | `http://<IP>:60071/webhook` |
 
-使用指令查看插件状态：
-```
-/webhook status
-```
+---
 
-## 消息示例
+## 📸 指令说明
 
-```
-🤖 📺 新剧集更新 [Jellyfin]
+| 指令 | 说明 |
+| :--- | :--- |
+| `/webhook status` | 查看当前 Webhook 监听状态与统计数据 |
 
-剧集名称: 进击的巨人 (2023)
-集号: S04E28
-集名称: 最终话
+---
 
-剧情简介:
-艾伦·耶格尔的故事迎来最终章节...
+## 🧩 配置项详解
 
-时长: 24分钟
-✨ 数据来源: TMDB
-```
+- **`media_template`**: 可选 `media_movie_modern.html` (精美海报墙) 或 `media_movie_daily.html` (白底卡片)。
+- **`game_ai_analyze`**: 默认开启。使用 AI 对原始推送内容进行智能摘要。
+- **`batch_interval_seconds`**: 默认 300 秒。在此时间内若有多条推送将触发**合并转发**，防止刷屏。
+
+---
 
 ## 许可证
-
 MIT License
