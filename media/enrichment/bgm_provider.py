@@ -27,7 +27,7 @@ class BGMProvider(MediaEnrichmentProvider, MediaImageProvider, BaseProvider):
     async def enrich_media_data(self, media_data: dict) -> dict:
         """只针对可能的动漫进行丰富"""
         # 如果已经通过 TMDB 丰富过了，且不是剧集，跳过 (或者根据需要保留)
-        if media_data.get("tmdb_enriched") and media_data.get("item_type") == "Movie":
+        if media_data.get("tmdb_enriched") and media_data.get("overview") and media_data.get("item_type") == "Movie":
             return media_data
 
         name = media_data.get("series_name") or media_data.get("item_name")

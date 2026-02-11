@@ -176,10 +176,17 @@ class TMDBProvider(MediaEnrichmentProvider, MediaImageProvider, BaseProvider):
             url, params={"api_key": self.tmdb_api_key, "language": "zh-CN"}
         )
         if data:
+            overview = data.get("overview")
+            # 如果中文简介为空，尝试获取英文简介
+            if not overview:
+                eng_data = await self._http_get(url, params={"api_key": self.tmdb_api_key})
+                if eng_data:
+                    overview = eng_data.get("overview")
+
             media_data.update(
                 {
                     "tmdb_id": data.get("id"),
-                    "overview": data.get("overview") or media_data.get("overview"),
+                    "overview": overview or media_data.get("overview"),
                     "year": (data.get("release_date") or "")[:4],
                     "poster_path": data.get("poster_path") or media_data.get("poster_path"),
                     "tmdb_enriched": True,
@@ -214,12 +221,18 @@ class TMDBProvider(MediaEnrichmentProvider, MediaImageProvider, BaseProvider):
                     data.get("id"), season, episode
                 )
                 if ep_data:
+                    overview = ep_data.get("overview")
+                    # 剧集同样增加英文回退
+                    if not overview:
+                        eng_ep_data = await self._get_tmdb_episode_details(data.get("id"), season, episode, language=None)
+                        if eng_ep_data:
+                            overview = eng_ep_data.get("overview")
+
                     media_data.update(
                         {
                             "item_name": ep_data.get("name")
                             or media_data.get("item_name"),
-                            "overview": ep_data.get("overview")
-                            or media_data.get("overview"),
+                            "overview": overview or media_data.get("overview"),
                             "tmdb_enriched": True,
                         }
                     )
@@ -314,12 +327,13 @@ class TMDBProvider(MediaEnrichmentProvider, MediaImageProvider, BaseProvider):
         return None
 
     async def _get_tmdb_episode_details(
-        self, tv_id: Any, season: Any, episode: Any
+        self, tv_id: Any, season: Any, episode: Any, language: str | None = "zh-CN"
     ) -> dict | None:
         url = f"{self.tmdb_base_url}/tv/{tv_id}/season/{season}/episode/{episode}"
-        return await self._http_get(
-            url, params={"api_key": self.tmdb_api_key, "language": "zh-CN"}
-        )
+        params = {"api_key": self.tmdb_api_key}
+        if language:
+            params["language"] = language
+        return await self._http_get(url, params=params)
 
     async def _get_fanart_image(self, media_data: dict) -> str:
         tmdb_id = media_data.get("tmdb_tv_id") or media_data.get("tmdb_id")
